@@ -19,7 +19,8 @@ def max_correlated_index(correlation_df):
     return (max_columnIndex, max_rowIndex, max_value)
 
 if __name__ == '__main__':
-    data_frame = pd.read_csv('HW_CLUSTERING_SHOPPING_CART_v2211.csv')
+    # you might need to change the path to run
+    data_frame = pd.read_csv('D:\CodeBaby\Python\hw6\hw06_CSCI420\HW_CLUSTERING_SHOPPING_CART_v2211.csv')
     # To remove white space everywhere in the data frame, especially for the name of attributes
     data_frame.columns = data_frame.columns.str.replace(' ', '')
     # Drop the irrelevant "ID" column for calculating correlation.
@@ -30,9 +31,24 @@ if __name__ == '__main__':
     # Replace all the 1 to 0 on the main diagonal
     df_1_to_0 = correlation_df.replace(1.00, 0.00)
     correlation_df_abs = df_1_to_0.abs()
-    #QA.1
+    print(correlation_df_abs.values)
+
+    print("QA.1")
+    print("Two attributes are most strongly cross-correlated")
     print(max_correlated_index(correlation_df_abs))
-    #QA.2
+    print("QA.2")
+    print('Cross-correlation coefficient of Chips with cereal')
+    print((correlation_df_abs['Chips']['Cerel']))
+    print("QA.3")
+    print('What fish most strongly cross-correlated with')
     print(correlation_df_abs['Fish'].nlargest(1))
+    print("QA.4")
+    print('What vegges most strongly cross-correlated with')
+    print(correlation_df_abs['Vegges'].nlargest(1))
+    print("QA.5")
+    print('Do people usually buy milk and cereal')
+    print((correlation_df_abs['Milk']['Cerel']))
+    print("They don't")
+
 
 

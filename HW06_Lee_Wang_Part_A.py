@@ -1,7 +1,7 @@
 #Creator: Vicky Wang, Anthony Lee
 #CSCI 420: HW06
-import pandas as pd
 
+import pandas as pd
 
 def max_correlated_index(correlation_df):
     '''

@@ -1,3 +1,5 @@
+#Creator: Vicky Wang, Anthony Lee
+#CSCI 420: HW06
 import pandas as pd
 
 
@@ -19,8 +21,8 @@ def max_correlated_index(correlation_df):
     return (max_columnIndex, max_rowIndex, max_value)
 
 if __name__ == '__main__':
-    # you might need to change the path to run
-    data_frame = pd.read_csv('D:\CodeBaby\Python\hw6\hw06_CSCI420\HW_CLUSTERING_SHOPPING_CART_v2211.csv')
+    # Make sure terminal is in this directory otherwise, you will need to change the path to run
+    data_frame = pd.read_csv('HW_CLUSTERING_SHOPPING_CART_v2211.csv')
     # To remove white space everywhere in the data frame, especially for the name of attributes
     data_frame.columns = data_frame.columns.str.replace(' ', '')
     # Drop the irrelevant "ID" column for calculating correlation.

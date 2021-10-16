@@ -30,25 +30,31 @@ if __name__ == '__main__':
     correlation_df = df_withoutID.corr().round(2)
     # Replace all the 1 to 0 on the main diagonal
     df_1_to_0 = correlation_df.replace(1.00, 0.00)
-    correlation_df_abs = df_1_to_0.abs()
-    print(correlation_df_abs.values)
+    # get the absolute value of coefficient for easier calculations
+    correlation_df_1_to_0_abs = df_1_to_0.abs()
+    correlation_df_abs = correlation_df.abs()
+    # export the correlation table for better answer the questions from write up
+    correlation_df.to_csv("Correlation_table.csv", index=True)
 
-    print("QA.1")
+
+    print("QA.a")
     print("Two attributes are most strongly cross-correlated")
     print(max_correlated_index(correlation_df_abs))
-    print("QA.2")
+    print("QA.b")
     print('Cross-correlation coefficient of Chips with cereal')
     print((correlation_df_abs['Chips']['Cerel']))
-    print("QA.3")
+    print("QA.c")
     print('What fish most strongly cross-correlated with')
     print(correlation_df_abs['Fish'].nlargest(1))
-    print("QA.4")
+    print("QA.d")
     print('What vegges most strongly cross-correlated with')
     print(correlation_df_abs['Vegges'].nlargest(1))
-    print("QA.5")
+    print("QA.f")
     print('Do people usually buy milk and cereal')
-    print((correlation_df_abs['Milk']['Cerel']))
-    print("They don't")
-
+    print((correlation_df['Milk']['Cerel']))
+    print("They don't.")
+    print("QA.f")
+    print('Which two attributes are not strongly cross-correlated with anything')
+    print(correlation_df_abs.sum(axis=0).nsmallest(2))
 
 

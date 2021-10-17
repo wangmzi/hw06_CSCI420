@@ -13,7 +13,7 @@ attr_names = ['ID', 'Milk', 'ChdBby', 'Vegges', 'Cerel', 'Bread', 'Rice', 'Meat'
 class cluster:
     def __init__(self, guest_id, records):
         #cluster guest Id
-        self.id = id
+        self.id = guest_id
         #Keeps track of all attributes in cluster
         self.records = records
         #Keeps track of what clusters are merged into the cluster
@@ -21,13 +21,12 @@ class cluster:
 
     def merge(cluster):
         self.merged_clusters.append(cluster)
-
-    def info(self):
-        print("Id:", self.id)
+    
+    def __str__(self):
         Id = []
         for x in self.merged_clusters:
             Id.append(x.id)
-        print("merged_clusters:",Id)
+        return "Id: "+ str(self.id) + '\nmerged_clusters: '+ str(Id)
 
 
 #used to find distance between two centers of clusters
@@ -58,8 +57,8 @@ def data_to_cluster(data):
 def main():
     data = retrieve_data('HW_CLUSTERING_SHOPPING_CART_v2211.csv')
     clusters = data_to_cluster(data)
-    clusters[0].info()
+    print(clusters[0])
+    print(clusters[0].records)
     return
-
 if __name__ == '__main__':
     main()

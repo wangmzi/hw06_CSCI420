@@ -138,6 +138,7 @@ def new_center(center,clusters):
             x.merged_clusters = []
     return center
 
+#TODO: needs to be fixed
 #Given a cluster recenter it based on the merged clusters
 def recenter(cluster):
     clusters = cluster.merged_clusters
@@ -153,6 +154,7 @@ def recenter(cluster):
 def recenter_grouped_clusters(clusters):
     for x in range(0,len(clusters)):
         print(x)
+        #TODO: Needs to be fixed
         clusters[x] = recenter(clusters[x])
     return
 
@@ -169,29 +171,46 @@ def group_clusters(cluster_dist, clusters, cluster_size):
         for x in clusters:
             if euclid_dist(curr_cluster, x) < cluster_dist and curr_cluster.size() < cluster_size:
                 curr_cluster.merge(remove_cluster(x,clusters))
-    # print(grouped_clusters[8])
-    #TODO: INFINITE LOOP AT LINE BELOW
-    recenter_grouped_clusters(grouped_clusters)
+    #TODO: Needs to be fixed
+    # recenter_grouped_clusters(grouped_clusters)
     
-    # if smallest_cluster(grouped_clusters) == smallest_size:
-    #     remaining_clusters = []
-    #     for x in grouped_clusters:
-    #         if x.size() == smallest_size:
-    #             remaining_clusters.append(remove_cluster(x, grouped_clusters))
-        
-        
+    if smallest_cluster(grouped_clusters) == smallest_size:
+        remaining_clusters = []
+        for x in grouped_clusters:
+            if x.size() == smallest_size:
+                remaining_clusters.append(remove_cluster(x, grouped_clusters))
+
+        for x in remaining_clusters:
+            possible_cluster = grouped_clusters[0]
+            distance = euclid_dist(x, possible_cluster)
+            for y in range(0,len(grouped_clusters)):
+                if euclid_dist(x,grouped_clusters[y]) < distance:
+                    possible_cluster = grouped_clusters[y]
+            possible_cluster.merge(x)
 
     return grouped_clusters, smallest_size 
 
+def group_iteration(cluster_dist,clusters,cluster_size, cycles):
+    grouped_clusters = clusters
+    merge_record = []
+    for x in range(0, cycles):
+        grouped_clusters, smallest_size = group_clusters(cluster_dist, grouped_clusters, cluster_size)
+        merge_record.append(smallest_size)
+    return grouped_clusters, merge_record
 
 def main():
     data = retrieve_data('HW_CLUSTERING_SHOPPING_CART_v2211.csv')
     clusters = data_to_cluster(data)
 
-    max_cluster_dist = 11 #arbitrary number 
+    max_cluster_dist = 9 #arbitrary number 
     cluster_size = 15 #arbitrary number
-    #TODO: figure out how to group the clusters and recenter them
-    grouped_clusters, smallest_size = group_clusters(max_cluster_dist, clusters, cluster_size)
+    cycles = 14 #iterations of grouping
+    #grouped clusters are the clusters after being merged together based on distance
+    #merge_record is to record the smallest group merged of each iteration
+    #TODO: fix recentering function (it is commented out)
+    grouped_clusters, merge_record= group_iteration(max_cluster_dist, clusters, cluster_size, cycles)
+    print(len(grouped_clusters))
+    print(merge_record)
 
     return
 

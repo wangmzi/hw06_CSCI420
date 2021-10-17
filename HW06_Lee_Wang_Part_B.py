@@ -39,7 +39,7 @@ class cluster:
 
     #returns the average distance of the clusters from center
     def average_dist(self):
-        return avg_distance(self, clusters)
+        return avg_distance(self, self.merged_clusters)
     
     #returns the size of the cluster including itself
     def size(self):
@@ -204,12 +204,25 @@ def main():
 
     max_cluster_dist = 8 #arbitrary number 
     cluster_size = 90 #arbitrary number
-    cycles = 18 #iterations of grouping
+    cycles = 15 #iterations of grouping
     #grouped clusters are the clusters after being merged together based on distance
     #merge_record is to record the smallest group merged of each iteration
     #TODO: fix recentering function (it is commented out)
+    #TODO: some clusters are lost, must figure out where they are being lost
     grouped_clusters, merge_record= group_iteration(max_cluster_dist, clusters, cluster_size, cycles)
-    print(merge_record)
+    sizes = []
+    avg_distance = []
+    for x in grouped_clusters:
+        sizes.append(x.size())
+        avg_distance.append(x.average_dist())
+    sizes.sort()
+    print("The following numbers are based on the following chateristics:")
+    print("Max distance a cluster(data point is from the center): ", max_cluster_dist)
+    print("Max cluster size: ", cluster_size)
+    print("# of cycles to merge: ", cycles)
+    print("\nnumber of clusters: ", len(grouped_clusters))
+    print("sizes of clusters (smallest to largest): ", sizes)
+    print("average prototype : ", sum(avg_distance)/len(avg_distance))
 
     return
 

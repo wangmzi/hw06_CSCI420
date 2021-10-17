@@ -17,6 +17,45 @@ vegetarian = [6,13]
 #excluding: milk,meat,yogurt/cheese, fish
 vegan = [0,6,7,8,13]
 
+#Takes a guest entry and converts it to a cluster format.
+class cluster:
+    #Constructor
+    def __init__(self, guest_id, records):
+        #cluster guest Id
+        self.id = guest_id
+        #Keeps track of all attributes in cluster
+        self.records = records
+        #Keeps track of what clusters are merged into the cluster
+        self.merged_clusters = []
+        #Keeps track of what is the center of the cluster
+        self.center = self
+
+    #appends a cluster to the list
+    def merge(self,cluster):
+        self.merged_clusters.append(cluster)
+        cluster.center = self
+        self.center = self
+        return
+
+    #returns the average distance of the clusters from center
+    def average_dist(self):
+        return avg_distance(self, clusters)
+    
+    #returns the size of the cluster including itself
+    def size(self):
+        return len(self.merged_clusters) + 1
+
+    #formats print statement
+    def __str__(self):
+        Id = []
+        for x in self.merged_clusters:
+            Id.append(x.id)
+        return ("Id: "+ str(self.id) + 
+        '\nattributes: ' + str(self.records) +
+        '\nmerged_clusters: '+ str(Id)
+        )
+
+
 #Gets data from the csv file and organizes it into an array
 #returns an array of entries
 def retrieve_data(csv_filename):
@@ -60,15 +99,6 @@ def avg_distance(center, clusters):
             sum += euclid_dist(center, x)
     return sum/len(clusters)-1
 
-#Given the new center attaches all the other clusters to it
-#Any of the given cluster lists are also reset in this scenario.
-def new_center(center,clusters):
-    for x in clusters:
-        if center != x:
-            center.merge(x)
-            if x.merged_clusters != []:
-                x.merged_clusters = []
-    return center
 
 #Used to find the shortest distance between 2 centers of clusters
 #Expects an array of clusters
@@ -76,81 +106,91 @@ def new_center(center,clusters):
 def shortest_dist(clusters):
     shortest = []
     distance = 99999999999999999
+    shortA, shortB = None, None
     for x in range(0,len(clusters)):
         for y in range(x+1,len(clusters)):
             cluA = clusters[x]
             cluB = clusters[y]
             if euclid_dist(cluA,cluB) < distance:
-                shortest = [cluA,cluB]
+                shortA = cluA
+                shortB = cluB
                 distance = euclid_dist(cluA, cluB)
-    return shortest,distance
+    return [shortA, shortB]
 
-#Used to test the clustering functions
-def test_clusters(clusters):
-    for x in range(1,4):
-        clusters[0].merge(clusters[x])
-    centered_cluster = clusters[0].reCenter()
-    for x in range(0,4):
-        print(clusters[x])
+#removes cluster from the array
+def remove_cluster(clu,clusters):
+    return (clusters.pop(clusters.index(clu)))
 
-#Used to get min and max of distances and avg
-def test_dist(clusters):
-    arr = []
+#returns the smallest clusters size.
+def smallest_cluster(clusters):
+    small = clusters[0].size()
+    for x in clusters:
+        if x.size() < small:
+            small = x.size()
+    return small
+
+#Given the new center attaches all the other clusters to it
+#Any of the given cluster lists are also reset in this scenario.
+def new_center(center,clusters):
+    for x in clusters:
+        center.merge(x)
+        if x.merged_clusters != []:
+            x.merged_clusters = []
+    return center
+
+#Given a cluster recenter it based on the merged clusters
+def recenter(cluster):
+    clusters = cluster.merged_clusters
+    clusters.append(cluster.center)
+    avg_dist = []
+    for x in clusters:
+        avg_dist.append(avg_distance(x, clusters))
+    idx = avg_dist.index(min(avg_dist))
+    center = clusters.pop(idx)
+    return new_center(center,clusters)
+
+#Given an array of clusters, recenters all of them.
+def recenter_grouped_clusters(clusters):
     for x in range(0,len(clusters)):
-        for y in range (x+1,len(clusters)):
-            arr.append(euclid_dist(clusters[x],clusters[y]))
-    print(min(arr))
-    print(sum(arr)/len(arr))
-    print(max(arr))
+        print(x)
+        clusters[x] = recenter(clusters[x])
+    return
 
-#Takes a guest entry and converts it to a cluster format.
-class cluster:
-    #Constructor
-    def __init__(self, guest_id, records):
-        #cluster guest Id
-        self.id = guest_id
-        #Keeps track of all attributes in cluster
-        self.records = records
-        #Keeps track of what clusters are merged into the cluster
-        self.merged_clusters = []
-        #Keeps track of what is the center of the cluster
-        self.center = self
-
-    #appends a cluster to the list
-    def merge(self,cluster):
-        self.merged_clusters.append(cluster)
-        cluster.center = self
-        self.center = self
-        return
-    
-    #re-centers the cluster based on the clusters inside it
-    def reCenter(self):
-        clusters = self.merged_clusters
-        clusters.append(self)
-        avg_dist = []
+#grouping the clusters and retruns smallest cluster merged
+#This is based off cluster distances
+#this also limits the clusters to certain sizes
+def group_clusters(cluster_dist, clusters, cluster_size):
+    smallest_size = smallest_cluster(clusters)
+    grouped_clusters = []
+    points = shortest_dist(clusters)
+    while clusters != []:
+        grouped_clusters.append(remove_cluster(clusters[0], clusters))
+        curr_cluster = grouped_clusters[len(grouped_clusters)-1]
         for x in clusters:
-            avg_dist.append(avg_distance(x, clusters))
-        idx = avg_dist.index(min(avg_dist))
-        center = clusters[idx]
-        return new_center(center,clusters)
+            if euclid_dist(curr_cluster, x) < cluster_dist and curr_cluster.size() < cluster_size:
+                curr_cluster.merge(remove_cluster(x,clusters))
+    # print(grouped_clusters[8])
+    recenter_grouped_clusters(grouped_clusters)
+    
+    # if smallest_cluster(grouped_clusters) == smallest_size:
+    #     remaining_clusters = []
+    #     for x in grouped_clusters:
+    #         if x.size() == smallest_size:
+    #             remaining_clusters.append(remove_cluster(x, grouped_clusters))
+        
+        
 
-    #formats print statement
-    def __str__(self):
-        Id = []
-        for x in self.merged_clusters:
-            Id.append(x.id)
-        return ("Id: "+ str(self.id) + 
-        '\nattributes: ' + str(self.records) +
-        '\nmerged_clusters: '+ str(Id)
-        )
+    return grouped_clusters, smallest_size 
 
 
 def main():
     data = retrieve_data('HW_CLUSTERING_SHOPPING_CART_v2211.csv')
     clusters = data_to_cluster(data)
 
-    # test_clusters(clusters)
-    # test_dist(clusters)
+    max_cluster_dist = 11 #arbitrary number 
+    cluster_size = 15 #arbitrary number
+    #TODO: figure out how to group the clusters
+    grouped_clusters, smallest_size = group_clusters(max_cluster_dist, clusters, cluster_size)
 
     return
 

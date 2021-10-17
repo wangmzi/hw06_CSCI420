@@ -202,14 +202,13 @@ def main():
     data = retrieve_data('HW_CLUSTERING_SHOPPING_CART_v2211.csv')
     clusters = data_to_cluster(data)
 
-    max_cluster_dist = 9 #arbitrary number 
-    cluster_size = 15 #arbitrary number
-    cycles = 14 #iterations of grouping
+    max_cluster_dist = 8 #arbitrary number 
+    cluster_size = 90 #arbitrary number
+    cycles = 18 #iterations of grouping
     #grouped clusters are the clusters after being merged together based on distance
     #merge_record is to record the smallest group merged of each iteration
     #TODO: fix recentering function (it is commented out)
     grouped_clusters, merge_record= group_iteration(max_cluster_dist, clusters, cluster_size, cycles)
-    print(len(grouped_clusters))
     print(merge_record)
 
     return

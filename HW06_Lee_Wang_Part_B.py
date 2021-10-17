@@ -5,18 +5,6 @@ import math as m
 import matplotlib.pyplot as plt
 import csv
 
-#Attribute names
-attr_names = ['ID', 'Milk:0', 'ChdBby:1', 'Vegges:2', 'Cerel:3', 'Bread:4', 'Rice:5', 'Meat:6', 
-'Eggs:7', 'YogChs:8', 'Chips:9', 'Soda:10', 'Fruit:11', 'Corn:12', 'Fish:13', 'Sauce:14', 'Beans:15', 'Tortya:16', 
-'Salt:17', 'Scented:18', 'Salza:19'] 
-
-#Typifying based on attribute indexes, putting the indexes to exclude
-#the attribute, not include
-#excluding: meats and fish
-vegetarian = [6,13]
-#excluding: milk,meat,yogurt/cheese, fish
-vegan = [0,6,7,8,13]
-
 #Takes a guest entry and converts it to a cluster format.
 class cluster:
     #Constructor
@@ -27,14 +15,11 @@ class cluster:
         self.records = records
         #Keeps track of what clusters are merged into the cluster
         self.merged_clusters = []
-        #Keeps track of what is the center of the cluster
-        self.center = self
+
 
     #appends a cluster to the list
     def merge(self,cluster):
         self.merged_clusters.append(cluster)
-        cluster.center = self
-        self.center = self
         return
 
     #returns the average distance of the clusters from center
@@ -138,7 +123,6 @@ def new_center(center,clusters):
             x.merged_clusters = []
     return center
 
-#TODO: needs to be fixed
 #Given a cluster recenter it based on the merged clusters
 def recenter(cluster):
     clusters = cluster.merged_clusters
@@ -154,13 +138,13 @@ def recenter(cluster):
 def recenter_grouped_clusters(clusters):
     for x in range(0,len(clusters)):
         print(x)
-        #TODO: Needs to be fixed
         clusters[x] = recenter(clusters[x])
     return
 
 #grouping the clusters and retruns smallest cluster merged
 #This is based off cluster distances
 #this also limits the clusters to certain sizes
+#TODO: some clusters are lost here
 def group_clusters(cluster_dist, clusters, cluster_size):
     smallest_size = smallest_cluster(clusters)
     grouped_clusters = []
@@ -171,6 +155,7 @@ def group_clusters(cluster_dist, clusters, cluster_size):
         for x in clusters:
             if euclid_dist(curr_cluster, x) < cluster_dist and curr_cluster.size() < cluster_size:
                 curr_cluster.merge(remove_cluster(x,clusters))
+
     #TODO: Needs to be fixed
     # recenter_grouped_clusters(grouped_clusters)
     
@@ -205,8 +190,10 @@ def main():
     max_cluster_dist = 8 #arbitrary number 
     cluster_size = 90 #arbitrary number
     cycles = 15 #iterations of grouping
+
     #grouped clusters are the clusters after being merged together based on distance
     #merge_record is to record the smallest group merged of each iteration
+    #The following TODO: are in the function call below group_iteration
     #TODO: fix recentering function (it is commented out)
     #TODO: some clusters are lost, must figure out where they are being lost
     grouped_clusters, merge_record= group_iteration(max_cluster_dist, clusters, cluster_size, cycles)

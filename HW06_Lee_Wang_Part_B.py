@@ -170,6 +170,7 @@ def group_clusters(cluster_dist, clusters, cluster_size):
             if euclid_dist(curr_cluster, x) < cluster_dist and curr_cluster.size() < cluster_size:
                 curr_cluster.merge(remove_cluster(x,clusters))
     # print(grouped_clusters[8])
+    #TODO: INFINITE LOOP AT LINE BELOW
     recenter_grouped_clusters(grouped_clusters)
     
     # if smallest_cluster(grouped_clusters) == smallest_size:
@@ -189,7 +190,7 @@ def main():
 
     max_cluster_dist = 11 #arbitrary number 
     cluster_size = 15 #arbitrary number
-    #TODO: figure out how to group the clusters
+    #TODO: figure out how to group the clusters and recenter them
     grouped_clusters, smallest_size = group_clusters(max_cluster_dist, clusters, cluster_size)
 
     return

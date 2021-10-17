@@ -32,6 +32,7 @@ def retrieve_data(csv_filename):
             except:
                 pass
         data.append(curr_entry)
+    file.close()
     return data
 
 #Takes the array of data and converts each entry into a cluster
@@ -84,6 +85,23 @@ def shortest_dist(clusters):
                 distance = euclid_dist(cluA, cluB)
     return shortest,distance
 
+#Used to test the clustering functions
+def test_clusters(clusters):
+    for x in range(1,4):
+        clusters[0].merge(clusters[x])
+    centered_cluster = clusters[0].reCenter()
+    for x in range(0,4):
+        print(clusters[x])
+
+#Used to get min and max of distances and avg
+def test_dist(clusters):
+    arr = []
+    for x in range(0,len(clusters)):
+        for y in range (x+1,len(clusters)):
+            arr.append(euclid_dist(clusters[x],clusters[y]))
+    print(min(arr))
+    print(sum(arr)/len(arr))
+    print(max(arr))
 
 #Takes a guest entry and converts it to a cluster format.
 class cluster:
@@ -130,12 +148,11 @@ class cluster:
 def main():
     data = retrieve_data('HW_CLUSTERING_SHOPPING_CART_v2211.csv')
     clusters = data_to_cluster(data)
-    short, dist = shortest_dist(clusters)
-    for x in range(1,5):
-        clusters[0].merge(clusters[x])
-    centered_cluster = clusters[0].reCenter()
-    for x in range(0,5):
-        print(clusters[x])
+
+    # test_clusters(clusters)
+    # test_dist(clusters)
+
     return
+
 if __name__ == '__main__':
     main()
